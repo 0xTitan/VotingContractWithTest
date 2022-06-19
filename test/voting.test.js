@@ -1,6 +1,6 @@
 const {
   BN,
-  ether,
+  constants,
   expectEvent,
   expectRevert,
 } = require("@openzeppelin/test-helpers");
@@ -16,41 +16,56 @@ contract("Voting", function (accounts) {
     this.VotingInstance = await Voting.new();
   });
 
+  describe("INITIAL STATE", () => {
+    it("Phase is voter registration phase", async function () {
+      expect(await this.VotingInstance.workflowStatus()).to.bignumber.equal(
+        "0"
+      );
+    });
+    it("No proposal registered", async function () {
+      let result = await this.VotingInstance.addVoter(voter1, { from: owner });
+      await expectRevert.unspecified(this.VotingInstance.getOneProposal(0), {
+        from: voter1,
+      });
+    });
+  });
+
   /************************REGISTRATION TEST*************/
-
-  it("Voter can be added only during voter registration phase", async function () {
-    await this.VotingInstance.startProposalsRegistering({ from: owner });
-    await expectRevert(
-      this.VotingInstance.addVoter(voter1, { from: owner }),
-      "Voters registration is not open yet"
-    );
-  });
-
-  it("Owner should add a new voter", async function () {
-    let result = await this.VotingInstance.addVoter(voter1, { from: owner });
-
-    expectEvent(result, "VoterRegistered", {
-      voterAddress: voter1,
-    });
-  });
-
-  it("Only Owner should add a new voter", async function () {
-    await expectRevert(
-      this.VotingInstance.addVoter(voter2, { from: voter1 }),
-      "Ownable: caller is not the owner"
-    );
-  });
-
-  it("Voter can only be registrated once", async function () {
-    let result = await this.VotingInstance.addVoter(voter1, { from: owner });
-
-    await expectEvent(result, "VoterRegistered", {
-      voterAddress: voter1,
+  describe("REGISTRATION", () => {
+    it("Voter can be added only during voter registration phase", async function () {
+      await this.VotingInstance.startProposalsRegistering({ from: owner });
+      await expectRevert(
+        this.VotingInstance.addVoter(voter1, { from: owner }),
+        "Voters registration is not open yet"
+      );
     });
 
-    await expectRevert(
-      this.VotingInstance.addVoter(voter1, { from: owner }),
-      "Already registered"
-    );
+    it("Owner should add a new voter", async function () {
+      let result = await this.VotingInstance.addVoter(voter1, { from: owner });
+
+      expectEvent(result, "VoterRegistered", {
+        voterAddress: voter1,
+      });
+    });
+
+    it("Only Owner should add a new voter", async function () {
+      await expectRevert(
+        this.VotingInstance.addVoter(voter2, { from: voter1 }),
+        "Ownable: caller is not the owner"
+      );
+    });
+
+    it("Voter can only be registrated once", async function () {
+      let result = await this.VotingInstance.addVoter(voter1, { from: owner });
+
+      await expectEvent(result, "VoterRegistered", {
+        voterAddress: voter1,
+      });
+
+      await expectRevert(
+        this.VotingInstance.addVoter(voter1, { from: owner }),
+        "Already registered"
+      );
+    });
   });
 });
