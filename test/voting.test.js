@@ -18,8 +18,8 @@ contract("Voting", function (accounts) {
 
   describe("INITIAL STATE", () => {
     it("Phase is voter registration phase", async function () {
-      expect(await this.VotingInstance.workflowStatus()).to.bignumber.equal(
-        "0"
+      expect(await this.VotingInstance.workflowStatus()).to.be.bignumber.equal(
+        new BN(0)
       );
     });
     it("No proposal registered", async function () {
@@ -55,7 +55,7 @@ contract("Voting", function (accounts) {
       );
     });
 
-    it("Voter can only be registrated once", async function () {
+    it("Voter can only be registered once", async function () {
       let result = await this.VotingInstance.addVoter(voter1, { from: owner });
 
       await expectEvent(result, "VoterRegistered", {
