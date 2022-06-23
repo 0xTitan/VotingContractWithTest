@@ -17,7 +17,7 @@ contract("Voting", function (accounts) {
 
   // ::::::::::::: INITIAL STATE ::::::::::::: //
 
-  describe.skip("INITIAL STATE", () => {
+  describe("INITIAL STATE", () => {
     before(async () => {
       this.VotingInstance = await Voting.new();
     });
@@ -35,7 +35,7 @@ contract("Voting", function (accounts) {
     });
   });
 
-  describe.skip("WORKFLOW STATUS UPDATE", () => {
+  describe("WORKFLOW STATUS UPDATE", () => {
     beforeEach(async () => {
       this.VotingInstance = await Voting.new();
     });
@@ -297,7 +297,7 @@ contract("Voting", function (accounts) {
   });
 
   /************************PROPOSAL REGISTRATION TEST*************/
-  describe.skip("PROPOSAL REGISTRATION", () => {
+  describe("PROPOSAL REGISTRATION", () => {
     //use before to keep state
     before(async () => {
       this.VotingInstance = await Voting.new();
