@@ -46,7 +46,7 @@ contract("Voting", function (accounts) {
         ).to.be.bignumber.equal(new BN(0));
       });
 
-      it("Normal update from voter registration to tally vote", async () => {
+      it("Normal update from voter registration to tally vote - event emitted", async () => {
         let result;
         for (var i = 1; i < 6; i++) {
           switch (true) {
@@ -152,7 +152,7 @@ contract("Voting", function (accounts) {
           });
         }
       });
-      it("Except revert if phase is not following the workflow", async () => {
+      it("Expect revert if phase is not following the workflow", async () => {
         let result;
         //for each phase test that we can only go to the next one, so we expect a revert in case next phase is not allowed
         for (var n = 0; n < 6; n++) {
@@ -235,7 +235,7 @@ contract("Voting", function (accounts) {
   });
 
   /************************VOTER REGISTRATION TEST*************/
-  describe.skip("VOTER REGISTRATION", () => {
+  describe("VOTER REGISTRATION", () => {
     beforeEach(async () => {
       this.VotingInstance = await Voting.new();
     });
@@ -248,7 +248,7 @@ contract("Voting", function (accounts) {
       );
     });
 
-    it("Owner should add a new voter", async () => {
+    it("Owner should add a new voter - event emitted", async () => {
       let result = await this.VotingInstance.addVoter(voter1, { from: owner });
 
       expectEvent(result, "VoterRegistered", {
@@ -258,16 +258,21 @@ contract("Voting", function (accounts) {
 
     it("Voter should be registered", async () => {
       let result = await this.VotingInstance.addVoter(voter1, { from: owner });
-
-      expectEvent(result, "VoterRegistered", {
-        voterAddress: voter1,
-      });
-
       //test voter exist and registered
       let voter = await this.VotingInstance.getVoter(voter1, {
         from: voter1,
       });
       expect(voter.isRegistered).to.equal(true);
+    });
+
+    //test voter has not voted
+    it("Voter has no yet voted", async () => {
+      let result = await this.VotingInstance.addVoter(voter1, { from: owner });
+      //test voter exist and registered
+      let voter = await this.VotingInstance.getVoter(voter1, {
+        from: voter1,
+      });
+      expect(voter.hasVoted).to.equal(false);
     });
 
     it("Only Owner can add a new voter", async () => {
@@ -312,7 +317,7 @@ contract("Voting", function (accounts) {
       );
     });
 
-    it("Registered voter can add a new proposal", async () => {
+    it("Registered voter can add a new proposal - event emitted", async () => {
       await this.VotingInstance.startProposalsRegistering({ from: owner });
       let result = await this.VotingInstance.addProposal(proposal1, {
         from: voter1,
@@ -396,7 +401,7 @@ contract("Voting", function (accounts) {
         "You're not a voter"
       );
     });
-    it("Register new vote", async () => {
+    it("Register new vote - event emitted", async () => {
       let result = await this.VotingInstance.setVote(new BN(0), {
         from: voter1,
       });
@@ -445,8 +450,61 @@ contract("Voting", function (accounts) {
         "Proposal not found"
       );
     });
-    //test tally vote
-    //test winner
+    it("Should end voting session", async () => {
+      await this.VotingInstance.endVotingSession({ from: owner });
+      expect(await this.VotingInstance.workflowStatus()).to.be.bignumber.equal(
+        new BN(4)
+      );
+    });
+  });
+
+  /************************VOTE TEST*************/
+  describe("GET WINNER", () => {
+    //use before to keep state
+    before(async () => {
+      this.VotingInstance = await Voting.new();
+      //add voters
+      await this.VotingInstance.addVoter(voter1, { from: owner });
+      await this.VotingInstance.addVoter(voter2, { from: owner });
+      //move to proposal registration
+      await this.VotingInstance.startProposalsRegistering({ from: owner });
+      //add proposals
+      await this.VotingInstance.addProposal(proposal1, {
+        from: voter1,
+      });
+      await this.VotingInstance.addProposal(proposal2, {
+        from: voter2,
+      });
+      //end registration phase
+      await this.VotingInstance.endProposalsRegistering({ from: owner });
+      //start voting
+      await this.VotingInstance.startVotingSession({ from: owner });
+      //vote
+      let result = await this.VotingInstance.setVote(new BN(1), {
+        from: voter1,
+      });
+      //end voting session
+      await this.VotingInstance.endVotingSession({ from: owner });
+    });
+
+    it("No Winner when workflow is not last one - tally vote", async () => {
+      expect(
+        await this.VotingInstance.winningProposalID()
+      ).to.be.bignumber.equal(new BN(0));
+    });
+
+    it("Should move to tally vote phase", async () => {
+      await this.VotingInstance.tallyVotes({ from: owner });
+      expect(await this.VotingInstance.workflowStatus()).to.be.bignumber.equal(
+        new BN(5)
+      );
+    });
+
+    it("Winner should be proposal 2", async () => {
+      expect(
+        await this.VotingInstance.winningProposalID()
+      ).to.be.bignumber.equal(new BN(1));
+    });
 
     //test modifier
   });
