@@ -504,74 +504,167 @@ contract("Voting", function (accounts) {
       await this.VotingInstance.endProposalsRegistering({ from: owner });
     });
 
-    it("Vote can be executed only during vote registration phase", async () => {
-      //add proposal
-      await expectRevert(
-        this.VotingInstance.setVote(new BN(0), { from: voter1 }),
-        "Voting session havent started yet"
-      );
-    });
-    it("Only voter can vote", async () => {
-      await this.VotingInstance.startVotingSession({ from: owner });
-      await expectRevert(
-        this.VotingInstance.setVote(new BN(0), { from: voter3 }),
-        "You're not a voter"
-      );
-    });
-    it("Register new vote - event emitted", async () => {
-      let result = await this.VotingInstance.setVote(new BN(0), {
-        from: voter1,
+    describe("VOTE - WORKFLOW STATUS CHECK", () => {
+      it("Worklow status should be : startVotingSession", async () => {
+        await this.VotingInstance.startVotingSession({ from: owner });
+        expect(
+          await this.VotingInstance.workflowStatus()
+        ).to.be.bignumber.equal(new BN(3));
       });
-      //test event emiited
-      expectEvent(result, "Voted", {
-        voter: voter1,
-        proposalId: new BN(0),
+
+      it("Should revert if a voter tries to vote in phase different from : startVotingSession. 2/2 expectRevert", async () => {
+        for (var n = 1; n < 3; n++) {
+          switch (true) {
+            case n == 1:
+              result = await this.VotingInstance.endVotingSession({
+                from: owner,
+              });
+              break;
+            case n == 2:
+              result = await this.VotingInstance.tallyVotes({
+                from: owner,
+              });
+              break;
+          }
+          await expectRevert(
+            this.VotingInstance.setVote(new BN(0), { from: voter1 }),
+            "Voting session havent started yet"
+          );
+        }
       });
     });
-    it("Should vote count increased", async () => {
-      let proposal = await this.VotingInstance.getOneProposal(new BN(0), {
-        from: voter1,
-      });
-      expect(proposal.voteCount).to.be.bignumber.equal(new BN(1));
-    });
-    //user has vote
-    it("Should voter mark has voted", async () => {
-      //test voter exist and registered
-      let voter = await this.VotingInstance.getVoter(voter1, {
-        from: voter1,
-      });
-      expect(voter.hasVoted).to.equal(true);
-    });
-    //user proposalId is registered
-    it("Should voter proposalId correctly registered", async () => {
-      let voter = await this.VotingInstance.getVoter(voter1, {
-        from: voter1,
-      });
-      expect(voter.votedProposalId).to.be.bignumber.equal(new BN(0));
-    });
-    //user cannot vote twice
-    it("Voter cannot vote twice", async () => {
-      await expectRevert(
-        this.VotingInstance.setVote(new BN(0), {
+
+    describe("VOTE - VOTER ACTION CHECK", () => {
+      //use before to keep state
+      before(async () => {
+        this.VotingInstance = await Voting.new();
+        //add voters
+        await this.VotingInstance.addVoter(voter1, { from: owner });
+        await this.VotingInstance.addVoter(voter2, { from: owner });
+        //move to proposal registration
+        await this.VotingInstance.startProposalsRegistering({ from: owner });
+        //add proposal
+        await this.VotingInstance.addProposal(proposal1, {
           from: voter1,
-        }),
-        "You have already voted"
-      );
+        });
+        //end registration phase
+        await this.VotingInstance.endProposalsRegistering({ from: owner });
+        //start voting session
+        await this.VotingInstance.startVotingSession({ from: owner });
+      });
+
+      it("Register new vote - event emitted", async () => {
+        let result = await this.VotingInstance.setVote(new BN(0), {
+          from: voter1,
+        });
+        //test event emiited
+        expectEvent(result, "Voted", {
+          voter: voter1,
+          proposalId: new BN(0),
+        });
+      });
+
+      //user cannot vote twice
+      it("Voter cannot vote twice", async () => {
+        await expectRevert(
+          this.VotingInstance.setVote(new BN(0), {
+            from: voter1,
+          }),
+          "You have already voted"
+        );
+      });
+
+      it("Should revert in case a non voter tries to vote", async () => {
+        await expectRevert(
+          this.VotingInstance.setVote(new BN(0), { from: voter3 }),
+          "You're not a voter"
+        );
+      });
     });
-    //should revert in case proposal id is out of range
-    it("Should revert in case proposal id doesn't exist", async () => {
-      await expectRevert(
-        this.VotingInstance.setVote(new BN(1), {
-          from: voter2,
-        }),
-        "Proposal not found"
-      );
+
+    describe("VOTE - VOTER DATA CHECK", () => {
+      beforeEach(async () => {
+        this.VotingInstance = await Voting.new();
+        //add voters
+        await this.VotingInstance.addVoter(voter1, { from: owner });
+        await this.VotingInstance.addVoter(voter2, { from: owner });
+        //move to proposal registration
+        await this.VotingInstance.startProposalsRegistering({ from: owner });
+        //add proposal
+        await this.VotingInstance.addProposal(proposal1, {
+          from: voter1,
+        });
+        //end registration phase
+        await this.VotingInstance.endProposalsRegistering({ from: owner });
+        //start voting session
+        await this.VotingInstance.startVotingSession({ from: owner });
+        //register vote
+        await this.VotingInstance.setVote(new BN(0), { from: voter1 });
+      });
+
+      //user has voted
+      it("Should voter marked has voted", async () => {
+        //test voter exist and registered
+        let voter = await this.VotingInstance.getVoter(voter1, {
+          from: voter1,
+        });
+        expect(voter.hasVoted).to.equal(true);
+      });
+
+      //user proposalId is registered
+      it("Should voter proposalId correctly registered", async () => {
+        let voter = await this.VotingInstance.getVoter(voter1, {
+          from: voter1,
+        });
+        expect(voter.votedProposalId).to.be.bignumber.equal(new BN(0));
+      });
     });
-    it("Should end voting session", async () => {
-      await this.VotingInstance.endVotingSession({ from: owner });
-      expect(await this.VotingInstance.workflowStatus()).to.be.bignumber.equal(
-        new BN(4)
-      );
+
+    describe("VOTE - PROPOSAL DATA CHECK", () => {
+      beforeEach(async () => {
+        this.VotingInstance = await Voting.new();
+        //add voters
+        await this.VotingInstance.addVoter(voter1, { from: owner });
+        await this.VotingInstance.addVoter(voter2, { from: owner });
+        //move to proposal registration
+        await this.VotingInstance.startProposalsRegistering({ from: owner });
+        //add proposal
+        await this.VotingInstance.addProposal(proposal1, {
+          from: voter1,
+        });
+        //end registration phase
+        await this.VotingInstance.endProposalsRegistering({ from: owner });
+        //start voting session
+        await this.VotingInstance.startVotingSession({ from: owner });
+        //register vote
+        await this.VotingInstance.setVote(new BN(0), { from: voter1 });
+      });
+
+      it("Should vote count increased", async () => {
+        let proposal = await this.VotingInstance.getOneProposal(new BN(0), {
+          from: voter1,
+        });
+        expect(proposal.voteCount).to.be.bignumber.equal(new BN(1));
+      });
+
+      //should revert in case proposal id is out of range
+      it("Should revert in case proposal id doesn't exist", async () => {
+        await expectRevert(
+          this.VotingInstance.setVote(new BN(1), {
+            from: voter2,
+          }),
+          "Proposal not found"
+        );
+      });
+    });
+
+    describe("VOTE - OWNER ACTION CHECK", () => {
+      it("Should end voting session", async () => {
+        await this.VotingInstance.endVotingSession({ from: owner });
+        expect(
+          await this.VotingInstance.workflowStatus()
+        ).to.be.bignumber.equal(new BN(4));
+      });
     });
   });
 
@@ -604,23 +697,27 @@ contract("Voting", function (accounts) {
       await this.VotingInstance.endVotingSession({ from: owner });
     });
 
-    it("No Winner when workflow is not last one - tally vote", async () => {
-      expect(
-        await this.VotingInstance.winningProposalID()
-      ).to.be.bignumber.equal(new BN(0));
+    describe("GET WINNER - WORKFLOW STATUS CHECK", () => {
+      it("No Winner when workflow is not last one - tally vote", async () => {
+        expect(
+          await this.VotingInstance.winningProposalID()
+        ).to.be.bignumber.equal(new BN(0));
+      });
+
+      it("Should move to tally vote phase", async () => {
+        await this.VotingInstance.tallyVotes({ from: owner });
+        expect(
+          await this.VotingInstance.workflowStatus()
+        ).to.be.bignumber.equal(new BN(5));
+      });
     });
 
-    it("Should move to tally vote phase", async () => {
-      await this.VotingInstance.tallyVotes({ from: owner });
-      expect(await this.VotingInstance.workflowStatus()).to.be.bignumber.equal(
-        new BN(5)
-      );
-    });
-
-    it("Winner should be proposal 2", async () => {
-      expect(
-        await this.VotingInstance.winningProposalID()
-      ).to.be.bignumber.equal(new BN(1));
+    describe("GET WINNER - CHECK RESULT", () => {
+      it("Winner should be proposal 2", async () => {
+        expect(
+          await this.VotingInstance.winningProposalID()
+        ).to.be.bignumber.equal(new BN(1));
+      });
     });
 
     //test modifier
