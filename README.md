@@ -66,11 +66,10 @@ Tests are executed in chronologic way following the workflow status
 
 Contract: Voting
 INITIAL STATE
-
 - Init phase is voter registration phase (25ms)
 - No proposal registered (1017ms, 50196 gas)
-  WORKFLOW STATUS UPDATE
-  SUNNY CASE
+WORKFLOW STATUS UPDATE
+SUNNY CASE
 - Init phase is voter registration phase (4ms)
 - Should update workflow from voter registration to tally vote - 5/5 event emitted (257ms, 174188 gas)
   ERROR CASE - EXPECT REVERT
