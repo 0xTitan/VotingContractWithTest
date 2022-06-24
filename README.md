@@ -170,13 +170,13 @@ Methods :
 
 | Contract    | Method                    | Min   | Max   | Avg     | # calls    | eur (avg) |
 | ----------- | ------------------------- | ----- | ----- | ------- | ---------- | --------- |
-| Voting      | addProposal               |       |       | 76632   | 10         |           |
-| Voting      | addVoter                  | -     | -     | 50196   | 16         |           |
-| Voting      | endProposalsRegistering   | -     | -     | 30575   | 11         |           |
-| Voting      | endVotingSession          | -     | -     | 30509   | 9          |           |
-| Voting      | setVote                   | -     | -     | 58101   | 12         |           |
-| Voting      | startProposalsRegistering | -     | -     | 47653   | 11         |           |
-| Voting      | startVotingSession        | -     | -     | 30530   | 12         |           |
-| Voting      | tallyVotes                | 34921 | 60637 | 40355   | 10         |           |
-| Deployments |                           |       |       |         | % of limit |           |
-| Voting      |                           |       |       | 2137238 | 31.8 %     |           |
+| Voting      | addProposal               | -     | -     | 76632   | 10         |-          |
+| Voting      | addVoter                  | -     | -     | 50196   | 16         |-          |
+| Voting      | endProposalsRegistering   | -     | -     | 30575   | 11         |-          |
+| Voting      | endVotingSession          | -     | -     | 30509   | 9          |-          |
+| Voting      | setVote                   | -     | -     | 58101   | 12         |-          |
+| Voting      | startProposalsRegistering | -     | -     | 47653   | 11         |-          |
+| Voting      | startVotingSession        | -     | -     | 30530   | 12         |-          |
+| Voting      | tallyVotes                | 34921 | 60637 | 40355   | 10         |-          |
+| Deployments |                           |       |       |         | % of limit |-          |
+| Voting      |                           |-      |-      | 2137238 | 31.8 %     |-          |
