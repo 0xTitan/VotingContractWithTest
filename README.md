@@ -79,11 +79,13 @@ For each test category, they are subdivision to test :
 
 So tests are all organised in the same way.
 
+Total test numbers : 34
+
 # Test result expected
 
 # Contract: Voting
 
-## INITIAL STATE
+# INITIAL STATE
 - Init phase is voter registration phase
 - No proposal registered
 # WORKFLOW STATUS UPDATE
@@ -106,50 +108,57 @@ So tests are all organised in the same way.
 - Voter can only be registered once
 # PROPOSAL REGISTRATION
 >PROPOSAL REGISTRATION - WORKFLOW CHECK
-- Worklow status should be : ProposalsRegistrationStarted (63ms, 47653 gas)
+- Worklow status should be : ProposalsRegistrationStarted
 - Should revert if proposal is added in phase different from : ProposalsRegistrationStarted. 4/4 expectRevert 
 >PROPOSAL REGISTRATION - VOTER ACTION CHECK
-- Registered voter can add a new proposal - event emitted (23ms, 76632 gas)
-- Should revert if non registered voter tries to add a new proposal (8ms)
+- Registered voter can add a new proposal - event emitted
+- Should revert if non registered voter tries to add a new proposal 
 >PROPOSAL REGISTRATION - PROPOSAL DATA CHECK
 - Should proposal exist with (21ms)
-- Should proposal exist with no vote count yet (6ms)
-- Empty proposal registration is forbidden (12ms)
+- Should proposal exist with no vote count yet
+- Empty proposal registration is forbidden 
 >PROPOSAL REGISTRATION - OWNER ACTION CHECK
-- Owner Should end proposal registration (22ms, 30575 gas)
+- Owner Should end proposal registration
 # VOTE
 >VOTE - WORKFLOW STATUS CHECK
-- Worklow status should be : startVotingSession (28ms, 30530 gas)
-- Should revert if a voter tries to vote in phase different from : startVotingSession. 2/2 expectRevert (56ms, 68334 gas)
+- Worklow status should be : startVotingSession
+- Should revert if a voter tries to vote in phase different from : startVotingSession. 2/2 expectRevert
 >VOTE - VOTER ACTION CHECK
-- Register new vote - event emitted (31ms, 58101 gas)
-- Voter cannot vote twice (8ms)
-- Should revert in case a non voter tries to vote (23ms)
+- Register new vote - event emitted
+- Voter cannot vote twice
+- Should revert in case a non voter tries to vote
 >VOTE - VOTER DATA CHECK
-- Should voter marked has voted (6ms)
-- Should voter proposalId correctly registered (18ms)
+- Should voter marked has voted
+- Should voter proposalId correctly registered
 >VOTE - PROPOSAL DATA CHECK
-- Should vote count increased (20ms)
-- Should revert in case proposal id doesn't exist (22ms)
+- Should vote count increased
+- Should revert in case proposal id doesn't exist
 >VOTE - OWNER ACTION CHECK
-- Should end voting session (99ms, 30509 gas)
+- Should end voting session
 # GET WINNER
 >GET WINNER - WORKFLOW STATUS CHECK
-- No Winner when workflow is not last one - tally vote (4ms)
-- Should move to tally vote phase (28ms, 60637 gas)
+- No Winner when workflow is not last one - tally vote
+- Should move to tally vote phase
 >GET WINNER - CHECK RESULT
-- Winner should be proposal 2 (536ms)
+- Winner should be proposal 2
 
-| Solc version: 0.8.14+commit.80d49f3 | Optimizer enabled: false | Runs: 200 | Block limit: 6718946 gas |
-| Methods |||
+# Gas ether report
+
+| Solc version: 0.8.14+commit.80d49f3  |  Optimizer enabled: false | Optimizer enabled: false  |  Optimizer enabled: false
+|---|---|---|---|
+
+| Methods |
+|---|
+
 | Contract | Method | Min | Max | Avg | # calls | eur (avg) |
+|---|---|---|---|---|---|---|
 | Voting | addProposal | | | 76632 | 10 | 
-|  Voting | addVoter                   |           -  |          -  |      50196  |          16  |          -  |
-|  Voting | endProposalsRegistering    |           -  |          -  |      30575  |          11  |          -  |
-|  Voting | endVotingSession           |           -  |          -  |      30509  |           9  |          -  |
-|  Voting | setVote                    |           -  |          -  |      58101  |          12  |          -  |
-|  Voting | startProposalsRegistering  |           -  |          -  |      47653  |          11  |          -  |
-|  Voting | startVotingSession         |           -  |          -  |      30530  |          12  |          -  |
-|  Voting | tallyVotes                 |       34921  |      60637  |      40355  |          10  |          -  |
-|  Deployments                         |                                          ·  % of limit  ·             |
-|  Voting                              |       ·      |    -  ·     |    -  ·     | 2137238  ·  |   31.8 %  ·  |
+|  Voting | addVoter                   |           -  |          -  |      50196  |          16  ||
+|  Voting | endProposalsRegistering    |           -  |          -  |      30575  |          11  ||
+|  Voting | endVotingSession           |           -  |          -  |      30509  |           9  ||
+|  Voting | setVote                    |           -  |          -  |      58101  |          12  ||
+|  Voting | startProposalsRegistering  |           -  |          -  |      47653  |          11  ||
+|  Voting | startVotingSession         |           -  |          -  |      30530  |          12  ||
+|  Voting | tallyVotes                 |       34921  |      60637  |      40355  |          10  ||
+|  Deployments                         |              |             |             |              |  % of limit |
+|  Voting                              |              |             |             | 2137238      |   31.8 %    |
