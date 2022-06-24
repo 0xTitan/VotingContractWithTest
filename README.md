@@ -83,61 +83,61 @@ So tests are all organised in the same way.
 
 # Contract: Voting
 
->## INITIAL STATE
+## INITIAL STATE
 - Init phase is voter registration phase
 - No proposal registered
->## WORKFLOW STATUS UPDATE
->>SUNNY CASE
+## WORKFLOW STATUS UPDATE
+>SUNNY CASE
 - Init phase is voter registration phase
 - Should update workflow from voter registration to tally vote - 5/5 event emitted
->>ERROR CASE - EXPECT REVERT
+>ERROR CASE - EXPECT REVERT
 - Only owner can update the workflow
 - Expect revert if phase is not following the workflow
->## VOTER REGISTRATION
->>VOTER REGISTRATION - WORKFLOW CHECK
+## VOTER REGISTRATION
+>VOTER REGISTRATION - WORKFLOW CHECK
 - Worklow status should be : RegisteringVoters
 - Should revert if voter is added in phase different from : RegisteringVoters. 5/5 expectRevert
->>VOTER REGISTRATION - OWNER ACTION CHECK
+>VOTER REGISTRATION - OWNER ACTION CHECK
 - Owner should add a new voter - event emitted
 - Should revert when address different from owner tries to add a new voter
->>VOTER REGISTRATION - VOTER DATA CHECK
+>VOTER REGISTRATION - VOTER DATA CHECK
 - Voter should be registered 
 - Voter has no yet voted 
 - Voter can only be registered once
-># PROPOSAL REGISTRATION
->>PROPOSAL REGISTRATION - WORKFLOW CHECK
+# PROPOSAL REGISTRATION
+>PROPOSAL REGISTRATION - WORKFLOW CHECK
 - Worklow status should be : ProposalsRegistrationStarted (63ms, 47653 gas)
 - Should revert if proposal is added in phase different from : ProposalsRegistrationStarted. 4/4 expectRevert 
->>PROPOSAL REGISTRATION - VOTER ACTION CHECK
+>PROPOSAL REGISTRATION - VOTER ACTION CHECK
 - Registered voter can add a new proposal - event emitted (23ms, 76632 gas)
 - Should revert if non registered voter tries to add a new proposal (8ms)
->>PROPOSAL REGISTRATION - PROPOSAL DATA CHECK
+>PROPOSAL REGISTRATION - PROPOSAL DATA CHECK
 - Should proposal exist with (21ms)
 - Should proposal exist with no vote count yet (6ms)
 - Empty proposal registration is forbidden (12ms)
->>PROPOSAL REGISTRATION - OWNER ACTION CHECK
+>PROPOSAL REGISTRATION - OWNER ACTION CHECK
 - Owner Should end proposal registration (22ms, 30575 gas)
-># VOTE
->>VOTE - WORKFLOW STATUS CHECK
+# VOTE
+>VOTE - WORKFLOW STATUS CHECK
 - Worklow status should be : startVotingSession (28ms, 30530 gas)
 - Should revert if a voter tries to vote in phase different from : startVotingSession. 2/2 expectRevert (56ms, 68334 gas)
->>VOTE - VOTER ACTION CHECK
+>VOTE - VOTER ACTION CHECK
 - Register new vote - event emitted (31ms, 58101 gas)
 - Voter cannot vote twice (8ms)
 - Should revert in case a non voter tries to vote (23ms)
->>VOTE - VOTER DATA CHECK
+>VOTE - VOTER DATA CHECK
 - Should voter marked has voted (6ms)
 - Should voter proposalId correctly registered (18ms)
->>VOTE - PROPOSAL DATA CHECK
+>VOTE - PROPOSAL DATA CHECK
 - Should vote count increased (20ms)
 - Should revert in case proposal id doesn't exist (22ms)
->>VOTE - OWNER ACTION CHECK
+>VOTE - OWNER ACTION CHECK
 - Should end voting session (99ms, 30509 gas)
-># GET WINNER
->>GET WINNER - WORKFLOW STATUS CHECK
+# GET WINNER
+>GET WINNER - WORKFLOW STATUS CHECK
 - No Winner when workflow is not last one - tally vote (4ms)
 - Should move to tally vote phase (28ms, 60637 gas)
->>GET WINNER - CHECK RESULT
+>GET WINNER - CHECK RESULT
 - Winner should be proposal 2 (536ms)
 
 ·------------------------------------------|----------------------------|-------------|----------------------------·
