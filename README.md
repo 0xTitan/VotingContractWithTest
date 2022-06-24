@@ -66,7 +66,7 @@ The first two tests are used to validate contract deployment and worflow process
 - INITIAL STATE
 - WORKFLOW STATUS UPDATE
 
-Once validated tests are executed following workflow :
+Once validated next tests are executed following workflow :
 
 - VOTER REGISTRATION
 - PROPOSAL REGISTRATION
