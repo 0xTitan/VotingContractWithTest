@@ -60,18 +60,23 @@ npm install eth-gas-reporter
 
 ## Test logic
 
+[Total test numbers : 34]
+
 Tests are executed in two ways.
 The first two tests are used to validate contract deployment and worflow process update.
-- INITIAL STATE
-- WORKFLOW STATUS UPDATE 
 
-Once validated tests are executed following workflow : 
+- INITIAL STATE
+- WORKFLOW STATUS UPDATE
+
+Once validated tests are executed following workflow :
+
 - VOTER REGISTRATION
 - PROPOSAL REGISTRATION
 - VOTE
 - GET WINNER
 
 For each test category, they are subdivision to test :
+
 - actual workflow status
 - user action (owner, voter)
 - data check (voter, proposal, vote)
@@ -79,86 +84,100 @@ For each test category, they are subdivision to test :
 
 So tests are all organised in the same way.
 
-Total test numbers : 34
-
 # Test result expected
 
 # Contract: Voting
 
 # INITIAL STATE
+
 - Init phase is voter registration phase
 - No proposal registered
+
 # WORKFLOW STATUS UPDATE
->SUNNY CASE
+
+> SUNNY CASE
+
 - Init phase is voter registration phase
 - Should update workflow from voter registration to tally vote - 5/5 event emitted
->ERROR CASE - EXPECT REVERT
+  > ERROR CASE - EXPECT REVERT
 - Only owner can update the workflow
 - Expect revert if phase is not following the workflow
+
 # VOTER REGISTRATION
->VOTER REGISTRATION - WORKFLOW CHECK
+
+> VOTER REGISTRATION - WORKFLOW CHECK
+
 - Worklow status should be : RegisteringVoters
 - Should revert if voter is added in phase different from : RegisteringVoters. 5/5 expectRevert
->VOTER REGISTRATION - OWNER ACTION CHECK
+  > VOTER REGISTRATION - OWNER ACTION CHECK
 - Owner should add a new voter - event emitted
 - Should revert when address different from owner tries to add a new voter
->VOTER REGISTRATION - VOTER DATA CHECK
-- Voter should be registered 
-- Voter has no yet voted 
+  > VOTER REGISTRATION - VOTER DATA CHECK
+- Voter should be registered
+- Voter has no yet voted
 - Voter can only be registered once
+
 # PROPOSAL REGISTRATION
->PROPOSAL REGISTRATION - WORKFLOW CHECK
+
+> PROPOSAL REGISTRATION - WORKFLOW CHECK
+
 - Worklow status should be : ProposalsRegistrationStarted
-- Should revert if proposal is added in phase different from : ProposalsRegistrationStarted. 4/4 expectRevert 
->PROPOSAL REGISTRATION - VOTER ACTION CHECK
+- Should revert if proposal is added in phase different from : ProposalsRegistrationStarted. 4/4 expectRevert
+  > PROPOSAL REGISTRATION - VOTER ACTION CHECK
 - Registered voter can add a new proposal - event emitted
-- Should revert if non registered voter tries to add a new proposal 
->PROPOSAL REGISTRATION - PROPOSAL DATA CHECK
+- Should revert if non registered voter tries to add a new proposal
+  > PROPOSAL REGISTRATION - PROPOSAL DATA CHECK
 - Should proposal exist with (21ms)
 - Should proposal exist with no vote count yet
-- Empty proposal registration is forbidden 
->PROPOSAL REGISTRATION - OWNER ACTION CHECK
+- Empty proposal registration is forbidden
+  > PROPOSAL REGISTRATION - OWNER ACTION CHECK
 - Owner Should end proposal registration
+
 # VOTE
->VOTE - WORKFLOW STATUS CHECK
+
+> VOTE - WORKFLOW STATUS CHECK
+
 - Worklow status should be : startVotingSession
 - Should revert if a voter tries to vote in phase different from : startVotingSession. 2/2 expectRevert
->VOTE - VOTER ACTION CHECK
+  > VOTE - VOTER ACTION CHECK
 - Register new vote - event emitted
 - Voter cannot vote twice
 - Should revert in case a non voter tries to vote
->VOTE - VOTER DATA CHECK
+  > VOTE - VOTER DATA CHECK
 - Should voter marked has voted
 - Should voter proposalId correctly registered
->VOTE - PROPOSAL DATA CHECK
+  > VOTE - PROPOSAL DATA CHECK
 - Should vote count increased
 - Should revert in case proposal id doesn't exist
->VOTE - OWNER ACTION CHECK
+  > VOTE - OWNER ACTION CHECK
 - Should end voting session
+
 # GET WINNER
->GET WINNER - WORKFLOW STATUS CHECK
+
+> GET WINNER - WORKFLOW STATUS CHECK
+
 - No Winner when workflow is not last one - tally vote
 - Should move to tally vote phase
->GET WINNER - CHECK RESULT
+  > GET WINNER - CHECK RESULT
 - Winner should be proposal 2
 
 # Gas ether report
 
-| Solc version: 0.8.14+commit.80d49f3  |  Optimizer enabled: false | Optimizer enabled: false  |  Optimizer enabled: false
-|---|---|---|---|
+| Solc version: 0.8.14+commit.80d49f3 | Optimizer enabled: false | Optimizer enabled: false | Optimizer enabled: false |
+| ----------------------------------- | ------------------------ | ------------------------ | ------------------------ |
 
 | Methods |
-|---|
+| ------- |
 
-| Contract | Method | Min | Max | Avg | # calls | eur (avg) |
-|---|---|---|---|---|---|---|
-| Voting | addProposal | | | 76632 | 10 | 
-|  Voting | addVoter                   |           -  |          -  |      50196  |          16  ||
-|  Voting | endProposalsRegistering    |           -  |          -  |      30575  |          11  ||
-|  Voting | endVotingSession           |           -  |          -  |      30509  |           9  ||
-|  Voting | setVote                    |           -  |          -  |      58101  |          12  ||
-|  Voting | startProposalsRegistering  |           -  |          -  |      47653  |          11  ||
-|  Voting | startVotingSession         |           -  |          -  |      30530  |          12  ||
-|  Voting | tallyVotes                 |       34921  |      60637  |      40355  |          10  ||
-|  Deployments                         |              |             |             |              |  % of limit |
-|  Voting                              |              |             |             | 2137238      |   31.8 %    |
+| Contract    | Method                    | Min   | Max   | Avg     | # calls    | eur (avg) |
+| ----------- | ------------------------- | ----- | ----- | ------- | ---------- | --------- |
+| Voting      | addProposal               |       |       | 76632   | 10         |
+| Voting      | addVoter                  | -     | -     | 50196   | 16         |           |
+| Voting      | endProposalsRegistering   | -     | -     | 30575   | 11         |           |
+| Voting      | endVotingSession          | -     | -     | 30509   | 9          |           |
+| Voting      | setVote                   | -     | -     | 58101   | 12         |           |
+| Voting      | startProposalsRegistering | -     | -     | 47653   | 11         |           |
+| Voting      | startVotingSession        | -     | -     | 30530   | 12         |           |
+| Voting      | tallyVotes                | 34921 | 60637 | 40355   | 10         |           |
+| Deployments |                           |       |       |         | % of limit |
+| Voting      |                           |       |       | 2137238 | 31.8 %     |
