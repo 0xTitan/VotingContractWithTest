@@ -164,8 +164,8 @@ So tests are all organised in the same way.
 | Solc version: 0.8.14+commit.80d49f3 | Optimizer enabled: false | Optimizer enabled: false | Optimizer enabled: false |
 | ----------------------------------- | ------------------------ | ------------------------ | ------------------------ |
 
-| Methods |
-| ------- |
+| Methods                                                                                                              |
+| -------                                                                                                              |
 
 | Contract    | Method                    | Min   | Max   | Avg     | # calls    | eur (avg) |
 | ----------- | ------------------------- | ----- | ----- | ------- | ---------- | --------- |
