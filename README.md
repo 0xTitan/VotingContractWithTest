@@ -58,9 +58,7 @@ truffle test test/voting.test.js --network develop
 npm install eth-gas-reporter
 ```
 
-## Test logic
-
-[Total test numbers : 34]
+## Test logic - total test number : 34
 
 Tests are executed in two ways.
 The first two tests are used to validate contract deployment and worflow process update.
