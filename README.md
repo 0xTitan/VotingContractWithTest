@@ -83,17 +83,17 @@ So tests are all organised in the same way.
 
 # Contract: Voting
 
-## INITIAL STATE
+# INITIAL STATE
 - Init phase is voter registration phase
 - No proposal registered
-## WORKFLOW STATUS UPDATE
+# WORKFLOW STATUS UPDATE
 >SUNNY CASE
 - Init phase is voter registration phase
 - Should update workflow from voter registration to tally vote - 5/5 event emitted
 >ERROR CASE - EXPECT REVERT
 - Only owner can update the workflow
 - Expect revert if phase is not following the workflow
-## VOTER REGISTRATION
+# VOTER REGISTRATION
 >VOTER REGISTRATION - WORKFLOW CHECK
 - Worklow status should be : RegisteringVoters
 - Should revert if voter is added in phase different from : RegisteringVoters. 5/5 expectRevert
