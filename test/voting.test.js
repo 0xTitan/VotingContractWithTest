@@ -463,7 +463,7 @@ contract("Voting", function (accounts) {
       });
     });
 
-    describe("VOTER REGISTRATION - OWNER ACTION CHECK", () => {
+    describe("PROPOSAL REGISTRATION - OWNER ACTION CHECK", () => {
       before(async () => {
         this.VotingInstance = await Voting.new();
         //add voter
