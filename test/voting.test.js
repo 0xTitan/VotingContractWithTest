@@ -316,6 +316,15 @@ contract("Voting", function (accounts) {
         });
       });
 
+      it("Should revert is a non voter tries to access voter data", async () => {
+        await expectRevert(
+          this.VotingInstance.getVoter(voter1, {
+            from: owner,
+          }),
+          "You're not a voter"
+        );
+      });
+
       it("Voter should be registered", async () => {
         //test voter exist and registered
         let voter = await this.VotingInstance.getVoter(voter1, {
@@ -435,6 +444,15 @@ contract("Voting", function (accounts) {
         await this.VotingInstance.addProposal(proposal1, {
           from: voter1,
         });
+      });
+
+      it("Should revert is a non voter tries to access proposal data", async () => {
+        await expectRevert(
+          this.VotingInstance.getOneProposal(new BN(0), {
+            from: owner,
+          }),
+          "You're not a voter"
+        );
       });
 
       it("Should proposal exist with ", async () => {

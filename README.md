@@ -58,7 +58,7 @@ truffle test test/voting.test.js --network develop
 npm install eth-gas-reporter
 ```
 
-## Test logic - total test number : 34
+## Test logic - total test number : 36
 
 Tests are executed in two ways.
 The first two tests are used to validate contract deployment and worflow process update.
@@ -98,7 +98,7 @@ So tests are all organised in the same way.
 - Only owner can update the workflow
 - Expect revert if phase is not following the workflow
 
-# VOTER REGISTRATION - 7 TESTS
+# VOTER REGISTRATION - 8 TESTS
 
 > VOTER REGISTRATION - WORKFLOW CHECK
 - Worklow status should be : RegisteringVoters
@@ -107,11 +107,12 @@ So tests are all organised in the same way.
 - Owner should add a new voter - event emitted
 - Should revert when address different from owner tries to add a new voter
 > VOTER REGISTRATION - VOTER DATA CHECK
+- Should revert is a non voter tries to access voter data
 - Voter should be registered
 - Voter has no yet voted
 - Voter can only be registered once
 
-# PROPOSAL REGISTRATION - 8 TESTS
+# PROPOSAL REGISTRATION - 9 TESTS
 
 > PROPOSAL REGISTRATION - WORKFLOW CHECK
 - Worklow status should be : ProposalsRegistrationStarted
@@ -120,6 +121,7 @@ So tests are all organised in the same way.
 - Registered voter can add a new proposal - event emitted
 - Should revert if non registered voter tries to add a new proposal
 > PROPOSAL REGISTRATION - PROPOSAL DATA CHECK
+- Should revert is a non voter tries to access voter data
 - Should proposal exist with (21ms)
 - Should proposal exist with no vote count yet
 - Empty proposal registration is forbidden
@@ -163,8 +165,8 @@ Methods :
 
 | Contract    | Method                    | Min   | Max   | Avg     | # calls    | eur (avg) |
 | ----------- | ------------------------- | ----- | ----- | ------- | ---------- | --------- |
-| Voting      | addProposal               | -     | -     | 76632   | 10         |-          |
-| Voting      | addVoter                  | -     | -     | 50196   | 16         |-          |
+| Voting      | addProposal               | -     | -     | 76632   | 11         |-          |
+| Voting      | addVoter                  | -     | -     | 50196   | 17         |-          |
 | Voting      | endProposalsRegistering   | -     | -     | 30575   | 11         |-          |
 | Voting      | endVotingSession          | -     | -     | 30509   | 9          |-          |
 | Voting      | setVote                   | -     | -     | 58101   | 12         |-          |
