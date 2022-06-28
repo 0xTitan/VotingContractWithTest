@@ -686,7 +686,7 @@ contract("Voting", function (accounts) {
     });
   });
 
-  /************************VOTE TEST*************/
+  /************************GET WINNER TEST*************/
   describe("GET WINNER", () => {
     //use before to keep state
     before(async () => {
@@ -737,7 +737,5 @@ contract("Voting", function (accounts) {
         ).to.be.bignumber.equal(new BN(1));
       });
     });
-
-    //test modifier
   });
 });
